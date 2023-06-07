@@ -1,4 +1,5 @@
 import { Request, Response } from 'express'
+import { RegisterReqBody } from '~/models/requests/user.requests'
 import usersService from '~/services/users.services'
 
 export const loginController = (req: Request, res: Response) => {
@@ -6,10 +7,8 @@ export const loginController = (req: Request, res: Response) => {
 }
 
 export const registerController = async (req: Request, res: Response) => {
-  const { email, password } = req.body
-
   try {
-    const result = await usersService.register({ email, password })
+    const result = await usersService.register(req.body as RegisterReqBody)
     return res.json({ message: 'Register successfully', result })
   } catch (error) {
     console.log(error)
