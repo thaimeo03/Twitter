@@ -3,8 +3,8 @@ import databaseService from './database.services'
 import { RegisterReqBody } from '~/models/requests/user.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
-import { TokenTypes } from '~/constants/enums'
-import { ACCESS_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from '~/constants/expires'
+import { TokenTypes, UserVerifyStatus } from '~/constants/enums'
+import { ACCESS_TOKEN_EXPIRES_IN, EMAIL_VERIFY_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from '~/constants/expires'
 import { ObjectId } from 'mongodb'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 
@@ -35,13 +35,31 @@ class UsersService {
     )
   }
 
+  private signEmailVerifyToken(user_id: string) {
+    return signToken(
+      {
+        user_id,
+        token_type: TokenTypes.EmailVerifyToken
+      },
+      { expiresIn: EMAIL_VERIFY_TOKEN_EXPIRES_IN }
+    )
+  }
+
   private signAccessTokenAndRefreshToken(user_id: string) {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
   }
 
   async register(payload: RegisterReqBody) {
+    const _id = new ObjectId()
+    const email_verify_token = await this.signEmailVerifyToken(_id.toString())
     const result = await databaseService.users.insertOne(
-      new User({ ...payload, date_of_birth: new Date(payload.date_of_birth), password: hashPassword(payload.password) })
+      new User({
+        ...payload,
+        _id,
+        password: hashPassword(payload.password),
+        date_of_birth: new Date(payload.date_of_birth),
+        email_verify_token
+      })
     )
 
     const user_id = result.insertedId.toString()
@@ -64,6 +82,18 @@ class UsersService {
 
   async logout(refresh_token: string) {
     await databaseService.refreshTokens.deleteOne({ token: refresh_token })
+  }
+
+  async verifyEmail(user_id: string) {
+    const [token] = await Promise.all([
+      this.signAccessTokenAndRefreshToken(user_id),
+      await databaseService.users.updateOne(
+        { _id: new ObjectId(user_id) },
+        { $set: { verify: UserVerifyStatus.Verified, email_verify_token: '' } }
+      )
+    ])
+    const [access_token, refresh_token] = token
+    return { access_token, refresh_token }
   }
 }
 

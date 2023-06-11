@@ -1,9 +1,15 @@
-import { loginController, logoutController, registerController } from '~/controllers/users.controllers'
+import {
+  loginController,
+  logoutController,
+  registerController,
+  verifyEmailController
+} from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
   loginValidator,
   refreshTokenValidator,
-  registerValidator
+  registerValidator,
+  verifyEmailValidator
 } from '~/middlewares/users.middlewares'
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
@@ -18,5 +24,8 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
 
 // header: access_token, body: refresh_token
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+
+// email_verify_token
+usersRouter.post('/verify-email', verifyEmailValidator, wrapRequestHandler(verifyEmailController))
 
 export default usersRouter

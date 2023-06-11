@@ -184,3 +184,24 @@ export const refreshTokenValidator = validate(
     ['body']
   )
 )
+
+export const verifyEmailValidator = validate(
+  checkSchema(
+    {
+      email_verify_token: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.EMAIL_VERIFY_TOKEN_IS_REQUIRED
+        },
+        custom: {
+          options: async (value, { req }) => {
+            const email_verify_token = value
+            const decodeEmailVerifyToken = await verifyToken(email_verify_token)
+            req.decodeEmailVerifyToken = decodeEmailVerifyToken
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
