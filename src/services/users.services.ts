@@ -9,6 +9,12 @@ import { ObjectId } from 'mongodb'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 
 class UsersService {
+  async emailExists(email: string) {
+    const result = await databaseService.users.findOne({ email })
+
+    return Boolean(result)
+  }
+
   private signAccessToken(user_id: string) {
     return signToken(
       {
@@ -56,10 +62,8 @@ class UsersService {
     return { access_token, refresh_token }
   }
 
-  async emailExists(email: string) {
-    const result = await databaseService.users.findOne({ email })
-
-    return Boolean(result)
+  async logout(refresh_token: string) {
+    await databaseService.refreshTokens.deleteOne({ token: refresh_token })
   }
 }
 
