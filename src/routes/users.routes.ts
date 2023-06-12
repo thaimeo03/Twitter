@@ -1,4 +1,5 @@
 import {
+  ResendEmailVerificationController,
   loginController,
   logoutController,
   registerController,
@@ -27,5 +28,8 @@ usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapReq
 
 // email_verify_token
 usersRouter.post('/verify-email', verifyEmailValidator, wrapRequestHandler(verifyEmailController))
+
+// header: access_token, body: none
+usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(ResendEmailVerificationController))
 
 export default usersRouter
