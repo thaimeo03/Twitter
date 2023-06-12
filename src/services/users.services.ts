@@ -4,7 +4,12 @@ import { RegisterReqBody } from '~/models/requests/user.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenTypes, UserVerifyStatus } from '~/constants/enums'
-import { ACCESS_TOKEN_EXPIRES_IN, EMAIL_VERIFY_TOKEN_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from '~/constants/expires'
+import {
+  ACCESS_TOKEN_EXPIRES_IN,
+  EMAIL_VERIFY_TOKEN_EXPIRES_IN,
+  FORGOT_PASSWORD_TOKEN_EXPIRES_IN,
+  REFRESH_TOKEN_EXPIRES_IN
+} from '~/constants/expires'
 import { ObjectId } from 'mongodb'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 
@@ -47,6 +52,16 @@ class UsersService {
 
   private signAccessTokenAndRefreshToken(user_id: string) {
     return Promise.all([this.signAccessToken(user_id), this.signRefreshToken(user_id)])
+  }
+
+  private signForgotPasswordToken(user_id: string) {
+    return signToken(
+      {
+        user_id,
+        token_type: TokenTypes.ForgotPasswordToken
+      },
+      { expiresIn: FORGOT_PASSWORD_TOKEN_EXPIRES_IN }
+    )
   }
 
   async register(payload: RegisterReqBody) {
@@ -102,6 +117,20 @@ class UsersService {
       { _id: new ObjectId(user_id) },
       { $set: { email_verify_token }, $currentDate: { updated_at: true } }
     )
+  }
+
+  async forgotPassword(user_id: string) {
+    const forgot_password_token = await this.signForgotPasswordToken(user_id)
+    await databaseService.users.updateOne(
+      {
+        _id: new ObjectId(user_id)
+      },
+      {
+        $set: { forgot_password_token },
+        $currentDate: { updated_at: true }
+      }
+    )
+    console.log(forgot_password_token)
   }
 }
 

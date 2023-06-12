@@ -15,7 +15,7 @@ export const loginController = async (req: Request, res: Response) => {
   return res.json({ message: USERS_MESSAGES.LOGIN_SUCCESSFULLY, result })
 }
 
-export const registerController = async (req: Request, res: Response, next: NextFunction) => {
+export const registerController = async (req: Request, res: Response) => {
   const result = await usersService.register(req.body as RegisterReqBody)
   return res.json({ message: USERS_MESSAGES.REGISTER_SUCCESSFULLY, result })
 }
@@ -57,4 +57,11 @@ export const ResendEmailVerificationController = async (req: Request, res: Respo
 
   await usersService.resendVerifyEmail(user_id)
   return res.json({ message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESSFULLY })
+}
+
+export const forgotPasswordController = async (req: Request, res: Response) => {
+  const user_id = req.user._id as ObjectId
+  await usersService.forgotPassword(user_id.toString())
+
+  return res.json({ message: USERS_MESSAGES.CHECK_YOUR_EMAIL_FOR_RESET_PASSWORD })
 }
