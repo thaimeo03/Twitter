@@ -89,7 +89,7 @@ class UsersService {
       this.signAccessTokenAndRefreshToken(user_id),
       await databaseService.users.updateOne(
         { _id: new ObjectId(user_id) },
-        { $set: { verify: UserVerifyStatus.Verified, email_verify_token: '' } }
+        { $set: { verify: UserVerifyStatus.Verified, email_verify_token: '' }, $currentDate: { updated_at: true } }
       )
     ])
     const [access_token, refresh_token] = token
