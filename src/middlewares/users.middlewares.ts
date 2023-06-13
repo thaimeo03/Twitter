@@ -1,4 +1,6 @@
 import { checkSchema } from 'express-validator'
+import { JwtPayload } from 'jsonwebtoken'
+import { ObjectId } from 'mongodb'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
@@ -224,6 +226,43 @@ export const forgotPasswordValidator = validate(
               throw new Error(USERS_MESSAGES.USER_NOT_FOUND)
             }
             req.user = user
+            return true
+          }
+        }
+      }
+    },
+    ['body']
+  )
+)
+
+export const verifyForgotPasswordTokenValidator = validate(
+  checkSchema(
+    {
+      forgot_password_token: {
+        notEmpty: {
+          errorMessage: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_REQUIRED
+        },
+        custom: {
+          options: async (value, { req }) => {
+            const forgot_password_token = value as string
+            const decodeForgotPasswordToken = (await verifyToken(forgot_password_token)) as JwtPayload
+            const user_id = decodeForgotPasswordToken.user_id as string
+            const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
+
+            if (user === null) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+
+            if (user.forgot_password_token !== forgot_password_token) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.FORGOT_PASSWORD_TOKEN_IS_NOT_VALID,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
+            }
+
             return true
           }
         }
