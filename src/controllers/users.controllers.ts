@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express'
+import { Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
@@ -11,7 +11,8 @@ import usersService from '~/services/users.services'
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
   const user_id = user._id as ObjectId
-  const result = await usersService.login(user_id.toString())
+  const verify = user.verify as UserVerifyStatus
+  const result = await usersService.login(user_id.toString(), verify)
   return res.json({ message: USERS_MESSAGES.LOGIN_SUCCESSFULLY, result })
 }
 
@@ -61,7 +62,8 @@ export const ResendEmailVerificationController = async (req: Request, res: Respo
 
 export const forgotPasswordController = async (req: Request, res: Response) => {
   const user_id = req.user._id as ObjectId
-  await usersService.forgotPassword(user_id.toString())
+  const verify = req.user.verify as UserVerifyStatus
+  await usersService.forgotPassword(user_id.toString(), verify)
 
   return res.json({ message: USERS_MESSAGES.CHECK_YOUR_EMAIL_FOR_RESET_PASSWORD })
 }
@@ -86,4 +88,8 @@ export const getUserController = async (req: Request, res: Response) => {
   }
 
   return res.json({ message: USERS_MESSAGES.GET_USER_SUCCESSFULLY, result: user })
+}
+
+export const updateUserController = async (req: Request, res: Response) => {
+  return res.json({ message: USERS_MESSAGES.UPDATE_USER_SUCCESSFULLY })
 }
