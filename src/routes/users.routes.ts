@@ -1,6 +1,7 @@
 import {
   ResendEmailVerificationController,
   forgotPasswordController,
+  getUserController,
   loginController,
   logoutController,
   registerController,
@@ -50,5 +51,8 @@ usersRouter.post(
 
 // password, confirm_password, forgot_password_token
 usersRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
+
+// header: access_token
+usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getUserController))
 
 export default usersRouter
