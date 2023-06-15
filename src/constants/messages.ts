@@ -35,5 +35,19 @@ export const USERS_MESSAGES = {
   RESET_PASSWORD_SUCCESSFULLY: 'Reset password successfully',
   GET_USER_SUCCESSFULLY: 'Get user successfully',
   USER_IS_NOT_VERIFIED: 'User is not verified',
-  UPDATE_USER_SUCCESSFULLY: 'Update user successfully'
+  BIO_MUST_BE_A_STRING: 'Bio must be a string',
+  BIO_LENGTH_MUST_BE_FROM_1_TO_300: 'Bio length must be from 1 to 300',
+  LOCATION_MUST_BE_A_STRING: 'Location must be a string',
+  LOCATION_LENGTH_MUST_BE_FROM_1_TO_100: 'Location length must be from 1 to 100',
+  WEBSITE_MUST_BE_A_STRING: 'Website must be a string',
+  WEBSITE_LENGTH_MUST_BE_FROM_1_TO_100: 'Website length must be from 1 to 100',
+  USERNAME_MUST_BE_A_STRING: 'Username must be a string',
+  USERNAME_LENGTH_MUST_BE_FROM_1_TO_100: 'Username length must be from 1 to 100',
+  AVATAR_MUST_BE_A_URL: 'Avatar must be a URL',
+  AVATAR_URL_LENGTH_MUST_BE_FROM_1_TO_200: 'Avatar url length must be from 1 to 200',
+  COVER_PHOTO_MUST_BE_A_URL: 'Cover photo must be a URL',
+  COVER_PHOTO_URL_LENGTH_MUST_BE_FROM_1_TO_200: 'Cover photo url length must be from 1 to 200',
+  UPDATE_USER_FAILED: 'Update user failed',
+  UPDATE_USER_SUCCESSFULLY: 'Update user successfully',
+  YOU_NOT_UPDATE_ANYTHING: 'You not update anything'
 } as const

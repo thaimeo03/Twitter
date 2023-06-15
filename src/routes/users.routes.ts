@@ -17,12 +17,14 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
+  updateUserValidator,
   verifiedUserValidator,
   verifyEmailValidator,
   verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
+import { body } from 'express-validator'
 
 const usersRouter = Router()
 
@@ -58,6 +60,12 @@ usersRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(r
 usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getUserController))
 
 // header: access_token, body: userSchema
-usersRouter.patch('/me', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(updateUserController))
+usersRouter.patch(
+  '/me',
+  accessTokenValidator,
+  verifiedUserValidator,
+  updateUserValidator,
+  wrapRequestHandler(updateUserController)
+)
 
 export default usersRouter

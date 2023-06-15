@@ -1,9 +1,10 @@
 import { Request, Response } from 'express'
+import { pick } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
-import { RegisterReqBody } from '~/models/requests/user.requests'
+import { RegisterReqBody, UpdateUserBody } from '~/models/requests/user.requests'
 import User from '~/models/schemas/User.schema'
 import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
@@ -91,5 +92,27 @@ export const getUserController = async (req: Request, res: Response) => {
 }
 
 export const updateUserController = async (req: Request, res: Response) => {
-  return res.json({ message: USERS_MESSAGES.UPDATE_USER_SUCCESSFULLY })
+  const payload = pick(req.body, [
+    'name',
+    'date_of_birth',
+    'bio',
+    'location',
+    'website',
+    'username',
+    'avatar',
+    'cover_photo'
+  ]) as UpdateUserBody
+
+  if (Object.keys(payload).length === 0) {
+    return res.json({ message: USERS_MESSAGES.YOU_NOT_UPDATE_ANYTHING })
+  }
+
+  const user_id = req.decodedAuthorization.user_id as string
+
+  const user = await usersService.updateUser(user_id, payload)
+  if (user === null) {
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: USERS_MESSAGES.UPDATE_USER_FAILED })
+  }
+
+  return res.json({ message: USERS_MESSAGES.UPDATE_USER_SUCCESSFULLY, result: user })
 }

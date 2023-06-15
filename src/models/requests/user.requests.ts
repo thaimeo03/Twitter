@@ -4,3 +4,14 @@ export interface RegisterReqBody {
   password: string
   date_of_birth: string
 }
+
+export interface UpdateUserBody {
+  name?: string
+  date_of_birth?: string
+  bio?: string
+  location?: string
+  website?: string
+  username?: string
+  avatar?: string
+  cover_photo?: string
+}

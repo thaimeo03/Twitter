@@ -1,6 +1,6 @@
 import User from '~/models/schemas/User.schema'
 import databaseService from './database.services'
-import { RegisterReqBody } from '~/models/requests/user.requests'
+import { RegisterReqBody, UpdateUserBody } from '~/models/requests/user.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenTypes, UserVerifyStatus } from '~/constants/enums'
@@ -164,6 +164,35 @@ class UsersService {
       }
     )
     return user
+  }
+
+  async updateUser(user_id: string, payload: UpdateUserBody) {
+    const { date_of_birth, ...rest } = payload
+    const update = date_of_birth ? { ...rest, date_of_birth: new Date(date_of_birth) } : rest
+
+    const user = await databaseService.users.findOneAndUpdate(
+      {
+        _id: new ObjectId(user_id)
+      },
+      {
+        $set: {
+          ...update
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      },
+      {
+        projection: {
+          password: 0,
+          email_verify_token: 0,
+          forgot_password_token: 0
+        },
+        returnDocument: 'after'
+      }
+    )
+
+    return user.value
   }
 }
 
