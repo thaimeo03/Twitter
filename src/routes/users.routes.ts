@@ -24,7 +24,8 @@ import {
 } from '~/middlewares/users.middlewares'
 import { Router } from 'express'
 import { wrapRequestHandler } from '~/utils/handler'
-import { body } from 'express-validator'
+import { UpdateUserBody } from '~/models/requests/user.requests'
+import { sanitizeData } from '~/middlewares/common.middlewares'
 
 const usersRouter = Router()
 
@@ -65,6 +66,16 @@ usersRouter.patch(
   accessTokenValidator,
   verifiedUserValidator,
   updateUserValidator,
+  sanitizeData<UpdateUserBody>([
+    'name',
+    'date_of_birth',
+    'bio',
+    'location',
+    'website',
+    'username',
+    'avatar',
+    'cover_photo'
+  ]),
   wrapRequestHandler(updateUserController)
 )
 
