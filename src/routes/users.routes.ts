@@ -1,6 +1,8 @@
 import {
   ResendEmailVerificationController,
+  followUserController,
   forgotPasswordController,
+  getProfileController,
   getUserController,
   loginController,
   logoutController,
@@ -12,6 +14,7 @@ import {
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
+  followerValidator,
   forgotPasswordValidator,
   loginValidator,
   refreshTokenValidator,
@@ -77,6 +80,17 @@ usersRouter.patch(
     'cover_photo'
   ]),
   wrapRequestHandler(updateUserController)
+)
+
+usersRouter.get('/:username', wrapRequestHandler(getProfileController))
+
+// header: access_token, body: followed_user_id
+usersRouter.post(
+  '/follow',
+  accessTokenValidator,
+  verifiedUserValidator,
+  followerValidator,
+  wrapRequestHandler(followUserController)
 )
 
 export default usersRouter

@@ -108,3 +108,25 @@ export const updateUserController = async (req: Request<ParamsDictionary, any, U
 
   return res.json({ message: USERS_MESSAGES.UPDATE_USER_SUCCESSFULLY, result: user })
 }
+
+export const getProfileController = async (req: Request, res: Response) => {
+  const { username } = req.params
+  const user = await usersService.getProfile(username)
+
+  if (!user) {
+    return res.status(HTTP_STATUS.NOT_FOUND).json({ message: USERS_MESSAGES.USER_NOT_FOUND })
+  }
+
+  return res.json({ message: USERS_MESSAGES.GET_PROFILE_SUCCESSFULLY, result: user })
+}
+
+export const followUserController = async (req: Request, res: Response) => {
+  const user_id = req.decodedAuthorization.user_id as string
+  const followed_user_id = req.body.followed_user_id as string
+
+  const result = await usersService.follow(user_id, followed_user_id)
+  if (result) {
+    return res.json({ message: USERS_MESSAGES.FOLLOWED })
+  }
+  return res.json({ message: USERS_MESSAGES.FOLLOWED_SUCCESSFULLY })
+}

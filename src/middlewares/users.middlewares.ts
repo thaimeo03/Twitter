@@ -379,6 +379,19 @@ export const updateUserValidator = validate(
           options: { min: 1, max: 100 },
           errorMessage: USERS_MESSAGES.USERNAME_LENGTH_MUST_BE_FROM_1_TO_100
         },
+        custom: {
+          options: async (value) => {
+            const username = value
+            const user = await databaseService.users.findOne({ username })
+            if (user) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.USERNAME_ALREADY_EXISTS,
+                status: HTTP_STATUS.BAD_REQUEST
+              })
+            }
+            return true
+          }
+        },
         trim: true
       },
       avatar: {
@@ -402,6 +415,34 @@ export const updateUserValidator = validate(
           errorMessage: USERS_MESSAGES.COVER_PHOTO_URL_LENGTH_MUST_BE_FROM_1_TO_200
         },
         trim: true
+      }
+    },
+    ['body']
+  )
+)
+
+export const followerValidator = validate(
+  checkSchema(
+    {
+      followed_user_id: {
+        custom: {
+          options: async (value) => {
+            const followed_user_id = value as string
+            if (!ObjectId.isValid(followed_user_id)) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.FOLLOWED_USER_ID_IS_NOT_VALID,
+                status: HTTP_STATUS.BAD_REQUEST
+              })
+            }
+            const follower = await databaseService.users.findOne({ _id: new ObjectId(followed_user_id) })
+            if (follower === null) {
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.USER_NOT_FOUND,
+                status: HTTP_STATUS.NOT_FOUND
+              })
+            }
+          }
+        }
       }
     },
     ['body']

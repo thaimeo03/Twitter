@@ -12,6 +12,7 @@ import {
 } from '~/constants/expires'
 import { ObjectId } from 'mongodb'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
+import Follower from '~/models/schemas/Follower.schema'
 
 class UsersService {
   async emailExists(email: string) {
@@ -75,6 +76,7 @@ class UsersService {
       new User({
         ...payload,
         _id,
+        username: `user-${_id.toString()}`,
         password: hashPassword(payload.password),
         date_of_birth: new Date(payload.date_of_birth),
         email_verify_token
@@ -193,6 +195,41 @@ class UsersService {
     )
 
     return user.value
+  }
+
+  async getProfile(username: string) {
+    const user = await databaseService.users.findOne(
+      { username },
+      {
+        projection: {
+          password: 0,
+          email_verify_token: 0,
+          forgot_password_token: 0,
+          verify: 0,
+          created_at: 0,
+          updated_at: 0
+        }
+      }
+    )
+    return user
+  }
+
+  async follow(user_id: string, followed_user_id: string) {
+    const followed = await databaseService.followers.findOne({
+      user_id: new ObjectId(user_id),
+      followed_user_id: new ObjectId(followed_user_id)
+    })
+
+    if (followed) {
+      return followed
+    }
+
+    await databaseService.followers.insertOne(
+      new Follower({
+        user_id: new ObjectId(user_id),
+        followed_user_id: new ObjectId(followed_user_id)
+      })
+    )
   }
 }
 

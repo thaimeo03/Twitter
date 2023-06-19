@@ -49,5 +49,10 @@ export const USERS_MESSAGES = {
   COVER_PHOTO_URL_LENGTH_MUST_BE_FROM_1_TO_200: 'Cover photo url length must be from 1 to 200',
   UPDATE_USER_FAILED: 'Update user failed',
   UPDATE_USER_SUCCESSFULLY: 'Update user successfully',
-  YOU_NOT_UPDATE_ANYTHING: 'You not update anything'
+  YOU_NOT_UPDATE_ANYTHING: 'You not update anything',
+  USERNAME_ALREADY_EXISTS: 'Username already exists',
+  GET_PROFILE_SUCCESSFULLY: 'Get profile successfully',
+  FOLLOWED_USER_ID_IS_NOT_VALID: 'Followed user id is not valid',
+  FOLLOWED: 'Followed',
+  FOLLOWED_SUCCESSFULLY: 'Followed successfully'
 } as const
