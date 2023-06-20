@@ -1,5 +1,6 @@
 import {
   ResendEmailVerificationController,
+  changePasswordController,
   followUserController,
   forgotPasswordController,
   getProfileController,
@@ -15,6 +16,7 @@ import {
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
+  changePasswordValidator,
   followerValidator,
   forgotPasswordValidator,
   loginValidator,
@@ -102,6 +104,14 @@ usersRouter.delete(
   verifiedUserValidator,
   unfollowerValidator,
   wrapRequestHandler(unfollowUserController)
+)
+
+// header: access_token, body: old_password, password, confirm_password
+usersRouter.put(
+  '/change-password',
+  accessTokenValidator,
+  changePasswordValidator,
+  wrapRequestHandler(changePasswordController)
 )
 
 export default usersRouter

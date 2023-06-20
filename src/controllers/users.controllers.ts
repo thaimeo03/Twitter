@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { USERS_MESSAGES } from '~/constants/messages'
-import { RegisterReqBody, UpdateUserBody } from '~/models/requests/user.requests'
+import { ChangePasswordBody, RegisterReqBody, UpdateUserBody } from '~/models/requests/user.requests'
 import User from '~/models/schemas/User.schema'
 import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
@@ -136,9 +136,16 @@ export const unfollowUserController = async (req: Request, res: Response) => {
   const followed_user_id = req.params.user_id as string
 
   const result = await usersService.unfollow(user_id, followed_user_id)
-
   if (result) {
     return res.json({ message: USERS_MESSAGES.UNFOLLOWED_SUCCESSFULLY })
   }
   return res.json({ message: USERS_MESSAGES.UNFOLLOWED })
+}
+
+export const changePasswordController = async (req: Request, res: Response) => {
+  const user_id = req.decodedAuthorization.user_id as string
+  const { password } = req.body as ChangePasswordBody
+  await usersService.changePassword(user_id, password)
+
+  return res.json({ message: USERS_MESSAGES.CHANGE_PASSWORD_SUCCESSFULLY })
 }
