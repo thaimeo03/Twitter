@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import { ParamSchema, body, checkSchema } from 'express-validator'
+import { ParamSchema, checkSchema } from 'express-validator'
 import { JwtPayload } from 'jsonwebtoken'
 import { ObjectId } from 'mongodb'
 import { UserVerifyStatus } from '~/constants/enums'
@@ -80,6 +80,29 @@ const schemaForgotPasswordToken: ParamSchema = {
     }
   }
 }
+
+const schemaFollower: ParamSchema = {
+  custom: {
+    options: async (value) => {
+      const followed_user_id = value as string
+      if (!ObjectId.isValid(followed_user_id)) {
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_ID_IS_NOT_VALID,
+          status: HTTP_STATUS.BAD_REQUEST
+        })
+      }
+      const follower = await databaseService.users.findOne({ _id: new ObjectId(followed_user_id) })
+      if (follower === null) {
+        throw new ErrorWithStatus({
+          message: USERS_MESSAGES.USER_NOT_FOUND,
+          status: HTTP_STATUS.NOT_FOUND
+        })
+      }
+    }
+  }
+}
+
+////////////
 
 export const loginValidator = validate(
   checkSchema(
@@ -424,27 +447,17 @@ export const updateUserValidator = validate(
 export const followerValidator = validate(
   checkSchema(
     {
-      followed_user_id: {
-        custom: {
-          options: async (value) => {
-            const followed_user_id = value as string
-            if (!ObjectId.isValid(followed_user_id)) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.FOLLOWED_USER_ID_IS_NOT_VALID,
-                status: HTTP_STATUS.BAD_REQUEST
-              })
-            }
-            const follower = await databaseService.users.findOne({ _id: new ObjectId(followed_user_id) })
-            if (follower === null) {
-              throw new ErrorWithStatus({
-                message: USERS_MESSAGES.USER_NOT_FOUND,
-                status: HTTP_STATUS.NOT_FOUND
-              })
-            }
-          }
-        }
-      }
+      followed_user_id: schemaFollower
     },
     ['body']
+  )
+)
+
+export const unfollowerValidator = validate(
+  checkSchema(
+    {
+      user_id: schemaFollower
+    },
+    ['params']
   )
 )

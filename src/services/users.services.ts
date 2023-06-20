@@ -231,6 +231,23 @@ class UsersService {
       })
     )
   }
+
+  async unfollow(user_id: string, followed_user_id: string) {
+    const followed = await databaseService.followers.findOne({
+      user_id: new ObjectId(user_id),
+      followed_user_id: new ObjectId(followed_user_id)
+    })
+
+    if (followed) {
+      const result = await databaseService.followers.deleteOne({
+        user_id: new ObjectId(user_id),
+        followed_user_id: new ObjectId(followed_user_id)
+      })
+      return result
+    }
+
+    return null
+  }
 }
 
 const usersService = new UsersService()

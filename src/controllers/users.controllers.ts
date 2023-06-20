@@ -130,3 +130,15 @@ export const followUserController = async (req: Request, res: Response) => {
   }
   return res.json({ message: USERS_MESSAGES.FOLLOWED_SUCCESSFULLY })
 }
+
+export const unfollowUserController = async (req: Request, res: Response) => {
+  const user_id = req.decodedAuthorization.user_id as string
+  const followed_user_id = req.params.user_id as string
+
+  const result = await usersService.unfollow(user_id, followed_user_id)
+
+  if (result) {
+    return res.json({ message: USERS_MESSAGES.UNFOLLOWED_SUCCESSFULLY })
+  }
+  return res.json({ message: USERS_MESSAGES.UNFOLLOWED })
+}
