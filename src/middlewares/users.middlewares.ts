@@ -208,6 +208,7 @@ export const accessTokenValidator = validate(
         custom: {
           options: async (value, { req }) => {
             const access_token = value.split(' ')[1]
+
             if (access_token === undefined) {
               throw new ErrorWithStatus({
                 message: USERS_MESSAGES.ACCESS_TOKEN_IS_REQUIRED,

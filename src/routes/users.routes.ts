@@ -7,6 +7,7 @@ import {
   getUserController,
   loginController,
   logoutController,
+  oauthGoogleController,
   registerController,
   resetPasswordController,
   unfollowUserController,
@@ -38,6 +39,9 @@ const usersRouter = Router()
 
 // email, password
 usersRouter.post('/login', loginValidator, wrapRequestHandler(loginController))
+
+// oauth 2.0 google
+usersRouter.get('/oauth/google', wrapRequestHandler(oauthGoogleController))
 
 // name, email, password, confirm_password, date_of_birth
 usersRouter.post('/register', registerValidator, wrapRequestHandler(registerController))

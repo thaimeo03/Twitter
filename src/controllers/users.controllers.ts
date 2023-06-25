@@ -8,6 +8,7 @@ import User from '~/models/schemas/User.schema'
 import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
+import 'dotenv/config'
 
 export const loginController = async (req: Request, res: Response) => {
   const user = req.user as User
@@ -15,6 +16,15 @@ export const loginController = async (req: Request, res: Response) => {
   const verify = user.verify as UserVerifyStatus
   const result = await usersService.login(user_id.toString(), verify)
   return res.json({ message: USERS_MESSAGES.LOGIN_SUCCESSFULLY, result })
+}
+
+export const oauthGoogleController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  const result = await usersService.oauthGoogle(code as string)
+
+  const urlRedirect = `${process.env.CLIENT_REDIRECT_URL}?access_token=${result.access_token}&refresh_token=${result.refresh_token}`
+
+  return res.redirect(urlRedirect)
 }
 
 export const registerController = async (req: Request, res: Response) => {
