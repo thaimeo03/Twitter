@@ -1,20 +1,14 @@
 import { Request, Response } from 'express'
 import path from 'path'
 import { MEDIAS_MESSAGES } from '~/constants/messages'
+import mediasService from '~/services/medias.services'
+import { handleUploadSingleFile } from '~/utils/file'
 
 export const uploadSingleImageController = async (req: Request, res: Response) => {
-  const formidable = (await import('formidable')).default
-  const form = formidable({
-    uploadDir: path.join(__dirname, '..', '..', 'uploads'),
-    keepExtensions: true,
-    maxFiles: 1,
-    maxFileSize: 300 * 1024 // 300kb
-  })
+  const result = await mediasService.uploadFile(req)
 
-  form.parse(req, (err, fields, files) => {
-    if (err) {
-      throw err
-    }
-    res.json({ message: MEDIAS_MESSAGES.UPLOAD_IMAGE_SUCCESSFULLY })
+  return res.json({
+    message: MEDIAS_MESSAGES.UPLOAD_IMAGE_SUCCESSFULLY,
+    result
   })
 }
