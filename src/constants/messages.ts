@@ -62,3 +62,7 @@ export const USERS_MESSAGES = {
   GMAIL_NOT_VERIFIED: 'Gmail not verified',
   OAUTH_GOOGLE_SUCCESSFULLY: 'Oauth google successfully'
 } as const
+
+export const MEDIAS_MESSAGES = {
+  UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully'
+} as const
