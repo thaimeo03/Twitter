@@ -11,13 +11,14 @@ export const initUploadFile = () => {
   }
 }
 
-export const handleUploadSingleFile = async (req: Request) => {
+export const handleUploadFile = async (req: Request) => {
   const formidable = (await import('formidable')).default
   const form = formidable({
     uploadDir: UPLOAD_DIR_TEMP,
     keepExtensions: true,
-    maxFiles: 1,
-    maxFileSize: 4000 * 1024, // 300kb
+    maxFiles: 4,
+    maxFileSize: 300 * 1024, // 300kb
+    maxTotalFileSize: 4 * 300 * 1024,
     filter: function ({ name, originalFilename, mimetype }) {
       const isImage = name === 'image' && Boolean(mimetype?.includes('image/'))
       if (!isImage) {
@@ -28,7 +29,7 @@ export const handleUploadSingleFile = async (req: Request) => {
     }
   })
 
-  return new Promise<File>((resolve, reject) => {
+  return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
         return reject(err)
@@ -39,7 +40,7 @@ export const handleUploadSingleFile = async (req: Request) => {
         return reject(new Error('File is empty'))
       }
 
-      resolve((files.image as File[])[0])
+      resolve(files.image as File[])
     })
   })
 }
