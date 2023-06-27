@@ -5,7 +5,7 @@ import { defaultErrorHandler } from './middlewares/error.middlewares'
 import mediasRouter from './routes/medias.routes'
 import { initUploadFile } from './utils/file'
 import 'dotenv/config'
-import { UPLOAD_DIR } from './constants/dir'
+import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 
 const app = express()
 const port = process.env.PORT || 4000
@@ -19,7 +19,8 @@ app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use(defaultErrorHandler)
 
-app.use('/static', express.static(UPLOAD_DIR))
+app.use('/static/image', express.static(UPLOAD_IMAGE_DIR))
+app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
