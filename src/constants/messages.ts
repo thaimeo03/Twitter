@@ -65,5 +65,6 @@ export const USERS_MESSAGES = {
 } as const
 
 export const MEDIAS_MESSAGES = {
-  UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully'
+  UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully',
+  REQUIRED_RANGE: 'Required range headers'
 } as const

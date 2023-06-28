@@ -194,10 +194,10 @@ class UsersService {
   }
 
   async refreshToken(old_refresh_token: string, req: Request) {
-    const { user_id, verified, exp } = req.decodeRefreshToken
-    const refresh_token = await this.signRefreshToken(user_id as string, verified as UserVerifyStatus, exp as number)
+    const { user_id, verify, exp } = req.decodeRefreshToken
+    const refresh_token = await this.signRefreshToken(user_id as string, verify as UserVerifyStatus, exp as number)
     const [access_token] = await Promise.all([
-      this.signAccessToken(user_id, UserVerifyStatus.Verified),
+      this.signAccessToken(user_id, verify as UserVerifyStatus),
       databaseService.refreshTokens.insertOne(
         new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
       ),

@@ -75,8 +75,6 @@ export const uploadVideoFile = async (req: Request) => {
         return reject(new Error('File is empty'))
       }
 
-      // const extention
-
       ;(files.video as File[]).forEach((file) => {
         const extension = getExtension(file.originalFilename as string)
         const newFilename = `${file.newFilename}.${extension}`
