@@ -18,6 +18,7 @@ import 'dotenv/config'
 import { ErrorWithStatus } from '~/models/Errors'
 import { USERS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
+import { Request } from 'express'
 
 class UsersService {
   async emailExists(email: string) {
@@ -37,14 +38,14 @@ class UsersService {
     )
   }
 
-  private signRefreshToken(user_id: string, verify: UserVerifyStatus) {
+  private signRefreshToken(user_id: string, verify: UserVerifyStatus, exp?: number) {
     return signToken(
       {
         user_id,
         token_type: TokenTypes.RefreshToken,
         verify
       },
-      { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+      { expiresIn: exp || REFRESH_TOKEN_EXPIRES_IN }
     )
   }
 
@@ -189,6 +190,19 @@ class UsersService {
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
     )
 
+    return { access_token, refresh_token }
+  }
+
+  async refreshToken(old_refresh_token: string, req: Request) {
+    const { user_id, verified, exp } = req.decodeRefreshToken
+    const refresh_token = await this.signRefreshToken(user_id as string, verified as UserVerifyStatus, exp as number)
+    const [access_token] = await Promise.all([
+      this.signAccessToken(user_id, UserVerifyStatus.Verified),
+      databaseService.refreshTokens.insertOne(
+        new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
+      ),
+      databaseService.refreshTokens.deleteOne({ token: old_refresh_token })
+    ])
     return { access_token, refresh_token }
   }
 

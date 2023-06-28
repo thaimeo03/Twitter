@@ -8,6 +8,7 @@ import {
   loginController,
   logoutController,
   oauthGoogleController,
+  refreshTokenController,
   registerController,
   resetPasswordController,
   unfollowUserController,
@@ -48,6 +49,9 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
 
 // header: access_token, body: refresh_token
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+
+// body: refresh_token
+usersRouter.post('/refresh-token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 
 // email_verify_token
 usersRouter.post('/verify-email', verifyEmailValidator, wrapRequestHandler(verifyEmailController))
