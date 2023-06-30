@@ -80,6 +80,7 @@ export const uploadVideoFile = async (req: Request) => {
         const newFilename = `${file.newFilename}.${extension}`
         file.newFilename = newFilename
         fs.renameSync(file.filepath, path.join(UPLOAD_VIDEO_DIR, newFilename))
+        file.filepath = path.join(UPLOAD_VIDEO_DIR, newFilename)
       })
 
       resolve(files.video as File[])

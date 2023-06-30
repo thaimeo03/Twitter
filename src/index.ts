@@ -6,6 +6,7 @@ import mediasRouter from './routes/medias.routes'
 import { initUploadFile } from './utils/file'
 import 'dotenv/config'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
+import cors from 'cors'
 
 const app = express()
 const port = process.env.PORT || 4000
@@ -14,6 +15,7 @@ databaseService.connect()
 // Init upload file if not exist
 initUploadFile()
 
+app.use(cors())
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
