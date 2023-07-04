@@ -33,6 +33,20 @@ class DatabaseService {
     this.users.createIndex({ email: 1, password: 1 })
   }
 
+  indexRefreshTokens() {
+    this.refreshTokens.createIndex({ token: 1 })
+    this.refreshTokens.createIndex(
+      { created_at: 1 },
+      {
+        expireAfterSeconds: 100 * 24 * 60 * 60
+      }
+    )
+  }
+
+  indexFollowers() {
+    this.followers.createIndex({ followed_user_id: 1, user_id: 1 })
+  }
+
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_USERS_COLLECTION as string)
   }

@@ -39,14 +39,12 @@ class UsersService {
   }
 
   private signRefreshToken(user_id: string, verify: UserVerifyStatus, exp?: number) {
-    return signToken(
-      {
-        user_id,
-        token_type: TokenTypes.RefreshToken,
-        verify
-      },
-      { expiresIn: exp || REFRESH_TOKEN_EXPIRES_IN }
-    )
+    return signToken({
+      user_id,
+      token_type: TokenTypes.RefreshToken,
+      verify,
+      exp: exp || Math.floor(Date.now() / 1000) + 100 * 24 * 60 * 60 // 100 days
+    })
   }
 
   private signEmailVerifyToken(user_id: string, verify: UserVerifyStatus) {
