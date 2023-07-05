@@ -42,6 +42,11 @@ export const uploadImageFile = async (req: Request) => {
         return reject(new Error('File is empty'))
       }
 
+      ;(files.image as File[]).forEach((file) => {
+        const newFilename = `${getNameImage(file.newFilename)}.jpg`
+        file.newFilename = newFilename
+      })
+
       resolve(files.image as File[])
     })
   })
