@@ -174,7 +174,10 @@ class UsersService {
           email: userInfo.email,
           date_of_birth: new Date(),
           password: hashPassword(userInfo.email),
-          verify: UserVerifyStatus.Verified
+          verify: UserVerifyStatus.Verified,
+          avatar: userInfo.picture,
+          location: userInfo.locale,
+          username: `user-${user_id.toString()}`
         })
       )
     }
