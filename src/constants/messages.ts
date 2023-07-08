@@ -68,3 +68,16 @@ export const MEDIAS_MESSAGES = {
   UPLOAD_IMAGE_SUCCESSFULLY: 'Upload image successfully',
   REQUIRED_RANGE: 'Required range headers'
 } as const
+
+export const TWEET_MESSAGES = {
+  INVALID_TWEET_TYPE: 'Invalid tweet type',
+  INVALID_AUDIENCE_TYPE: 'Invalid audience type',
+  PARENT_ID_MUST_BE_A_VALID_TWEET_ID: 'Parent id must be a valid tweet id',
+  PARENT_ID_MUST_BE_NULL: 'Parent id must be null',
+  CONTENT_MUST_NOT_BE_EMPTY: 'Content must not be empty',
+  CONTENT_MUST_BE_EMPTY: 'Content must be empty',
+  HASHTAGS_MUST_BE_STRING: 'Hashtags must be a string',
+  MENTIONS_MUST_BE_AN_ARRAY_OF_USER_ID: 'Mentions must be an array of user ids',
+  INVALID_MEDIA_TYPE: 'Invalid media type',
+  MEDIAS_MUST_BE_AN_ARRAY_OF_MEDIA_OBJECTS: 'Medias must be an array of media objects'
+} as const

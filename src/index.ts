@@ -7,6 +7,7 @@ import { initUploadFile } from './utils/file'
 import 'dotenv/config'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import cors from 'cors'
+import tweetsRouter from './routes/tweets.routes'
 
 const app = express()
 const port = process.env.PORT || 4000
@@ -19,6 +20,7 @@ app.use(cors())
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/tweets', tweetsRouter)
 app.use(defaultErrorHandler)
 
 app.use('/static/image', express.static(UPLOAD_IMAGE_DIR))
