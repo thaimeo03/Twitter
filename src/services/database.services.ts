@@ -4,6 +4,8 @@ import User from '~/models/schemas/User.schema'
 import { error } from 'console'
 import RefreshToken from '~/models/schemas/RefreshToken.schema'
 import Follower from '~/models/schemas/Follower.schema'
+import Tweet from '~/models/schemas/Twitter.schema'
+import Hashtag from '~/models/schemas/Hashtag.schema'
 
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.3menitg.mongodb.net/?retryWrites=true&w=majority`
 
@@ -47,6 +49,11 @@ class DatabaseService {
     this.followers.createIndex({ followed_user_id: 1, user_id: 1 })
   }
 
+  indexHashtags() {
+    this.hashtags.createIndex({ name: 1 })
+  }
+
+  // Collections
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_USERS_COLLECTION as string)
   }
@@ -57,6 +64,14 @@ class DatabaseService {
 
   get followers(): Collection<Follower> {
     return this.db.collection(process.env.DB_FOLLOWERS_COLLECTION as string)
+  }
+
+  get tweets(): Collection<Tweet> {
+    return this.db.collection(process.env.DB_TWEETS_COLLECTION as string)
+  }
+
+  get hashtags(): Collection<Hashtag> {
+    return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
   }
 }
 

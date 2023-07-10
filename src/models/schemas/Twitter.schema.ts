@@ -4,13 +4,13 @@ import { Media } from '../interfaces/media.interfaces'
 
 interface TweetConstructorType {
   _id?: ObjectId
-  user_id: ObjectId
+  user_id: string
   type: TweetType
   audience: TweetAudience
   content: string
-  parent_id: null | ObjectId //  chỉ null khi tweet gốc
+  parent_id: null | string //  chỉ null khi tweet gốc
   hashtags: ObjectId[]
-  mentions: ObjectId[]
+  mentions: string[]
   medias: Media[]
   guest_views?: number
   user_views?: number
@@ -36,13 +36,13 @@ export default class Tweet {
   constructor(tweet: TweetConstructorType) {
     const date = new Date()
     this._id = tweet._id || new ObjectId()
-    this.user_id = tweet.user_id
+    this.user_id = new ObjectId(tweet.user_id)
     this.type = tweet.type
     this.audience = tweet.audience
     this.content = tweet.content
-    this.parent_id = tweet.parent_id
+    this.parent_id = tweet.parent_id ? new ObjectId(tweet.parent_id) : null
     this.hashtags = tweet.hashtags
-    this.mentions = tweet.mentions
+    this.mentions = tweet.mentions.map((id) => new ObjectId(id))
     this.medias = tweet.medias
     this.guest_views = tweet.guest_views || 0
     this.user_views = tweet.user_views || 0
