@@ -53,6 +53,10 @@ class DatabaseService {
     this.hashtags.createIndex({ name: 1 })
   }
 
+  indexBookmarks() {
+    this.bookmarks.createIndex({ user_id: 1, tweet_id: 1 })
+  }
+
   // Collections
   get users(): Collection<User> {
     return this.db.collection(process.env.DB_USERS_COLLECTION as string)
@@ -72,6 +76,10 @@ class DatabaseService {
 
   get hashtags(): Collection<Hashtag> {
     return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
+  }
+
+  get bookmarks(): Collection<Tweet> {
+    return this.db.collection(process.env.DB_BOOKMARKS_COLLECTION as string)
   }
 }
 
