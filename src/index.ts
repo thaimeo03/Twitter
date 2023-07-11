@@ -9,6 +9,7 @@ import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
+import likeRouter from './routes/likes.routes'
 
 const app = express()
 const port = process.env.PORT || 4000
@@ -23,6 +24,7 @@ app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRouter)
+app.use('/likes', likeRouter)
 app.use(defaultErrorHandler)
 
 app.use('/static/image', express.static(UPLOAD_IMAGE_DIR))

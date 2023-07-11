@@ -1,7 +1,6 @@
 import Bookmark from '~/models/schemas/Bookmark.schema'
 import databaseService from './database.services'
 import { ObjectId, WithId } from 'mongodb'
-import Tweet from '~/models/schemas/Twitter.schema'
 
 class BookmarksService {
   async createBookmark(user_id: string, tweet_id: string) {
@@ -20,7 +19,7 @@ class BookmarksService {
     )
 
     return {
-      bookmark_id: (result.value as WithId<Tweet>)._id
+      bookmark_id: (result.value as WithId<Bookmark>)._id
     }
   }
 
