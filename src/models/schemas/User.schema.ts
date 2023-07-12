@@ -7,6 +7,7 @@ interface UserType {
   email: string
   date_of_birth: Date
   password: string
+  twitter_circle?: ObjectId[]
   created_at?: Date
   updated_at?: Date
   email_verify_token?: string // jwt hoặc '' nếu đã xác thực email
@@ -27,6 +28,7 @@ export default class User {
   email: string
   date_of_birth: Date
   password: string
+  twitter_circle: ObjectId[]
   created_at: Date
   updated_at: Date
   email_verify_token: string
@@ -47,6 +49,7 @@ export default class User {
     this.email = user.email
     this.date_of_birth = user.date_of_birth
     this.password = user.password
+    this.twitter_circle = user.twitter_circle || []
     this.created_at = user.created_at || date
     this.updated_at = user.updated_at || date
     this.email_verify_token = user.email_verify_token || ''

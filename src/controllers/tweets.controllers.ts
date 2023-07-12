@@ -9,3 +9,10 @@ export const createTweetController = async (req: Request, res: Response) => {
 
   return res.json({ message: TWEET_MESSAGES.CREATE_TWEET_SUCCESSFULLY, result })
 }
+
+export const getTweetController = async (req: Request, res: Response) => {
+  const { tweet_id } = req.params
+
+  // const result = await tweetsService.getTweet(tweet_id)
+  return res.json({ message: TWEET_MESSAGES.GET_TWEET_SUCCESSFULLY })
+}
