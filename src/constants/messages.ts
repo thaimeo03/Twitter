@@ -61,7 +61,9 @@ export const USERS_MESSAGES = {
   OLD_PASSWORD_INCORRECT: 'Old password incorrect',
   CHANGE_PASSWORD_SUCCESSFULLY: 'Change password successfully',
   GMAIL_NOT_VERIFIED: 'Gmail not verified',
-  OAUTH_GOOGLE_SUCCESSFULLY: 'Oauth google successfully'
+  OAUTH_GOOGLE_SUCCESSFULLY: 'Oauth google successfully',
+  UNAUTHORIZED: 'Unauthorized',
+  USER_NOT_IN_TWITTER_CIRCLE: 'User not in twitter circle'
 } as const
 
 export const MEDIAS_MESSAGES = {

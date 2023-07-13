@@ -494,3 +494,12 @@ export const changePasswordValidator = validate(
     confirm_password: schemaConfirmPassword
   })
 )
+
+export const isUserLoggedInValidator = (middlewareFunc: any) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    if (req.headers.authorization) {
+      return middlewareFunc(req, res, next)
+    }
+    next()
+  }
+}

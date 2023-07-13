@@ -1,12 +1,15 @@
+import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import { isEmpty } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { MediaType, TweetAudience, TweetType } from '~/constants/enums'
 import HTTP_STATUS from '~/constants/httpStatus'
-import { TWEET_MESSAGES } from '~/constants/messages'
+import { TWEET_MESSAGES, USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import Tweet from '~/models/schemas/Twitter.schema'
 import databaseService from '~/services/database.services'
 import { numberEnumToArray } from '~/utils/common'
+import { wrapRequestHandler } from '~/utils/handler'
 import { validate } from '~/utils/validate'
 
 const tweetTypes = numberEnumToArray(TweetType)
@@ -142,7 +145,7 @@ export const tweetIdValidator = validate(
       tweet_id: {
         isString: true,
         custom: {
-          options: async (value) => {
+          options: async (value, { req }) => {
             const tweet_id = value as string
 
             if (!ObjectId.isValid(tweet_id)) {
@@ -159,6 +162,7 @@ export const tweetIdValidator = validate(
                 message: TWEET_MESSAGES.TWEET_NOT_FOUND
               })
             }
+            req.tweet = tweet
             return true
           }
         }
@@ -167,3 +171,37 @@ export const tweetIdValidator = validate(
     ['body', 'params']
   )
 )
+
+export const audienceValidator = wrapRequestHandler(async (req: Request, res: Response, next: NextFunction) => {
+  const tweet = req.tweet as Tweet
+  if (tweet.audience === TweetAudience.TwitterCircle) {
+    // Check user is logged in
+    if (!req.decodedAuthorization) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.UNAUTHORIZED,
+        message: USERS_MESSAGES.UNAUTHORIZED
+      })
+    }
+
+    // Find author of tweet
+    const author = await databaseService.users.findOne({ _id: tweet.user_id })
+    if (!author) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.NOT_FOUND,
+        message: USERS_MESSAGES.USER_NOT_FOUND
+      })
+    }
+
+    // Check user is in circle of author
+    const user_id = req.decodedAuthorization.user_id as string
+    const isInTwitterCircle = author.twitter_circle.some((id) => id.equals(new ObjectId(user_id)))
+    // If user is not in circle of author and user is not author
+    if (!author._id.equals(user_id) && !isInTwitterCircle) {
+      throw new ErrorWithStatus({
+        status: HTTP_STATUS.UNAUTHORIZED,
+        message: USERS_MESSAGES.USER_NOT_IN_TWITTER_CIRCLE
+      })
+    }
+  }
+  next()
+})
