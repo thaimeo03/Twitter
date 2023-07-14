@@ -11,8 +11,6 @@ export const createTweetController = async (req: Request, res: Response) => {
 }
 
 export const getTweetController = async (req: Request, res: Response) => {
-  const { tweet_id } = req.params
-
-  // const result = await tweetsService.getTweet(tweet_id)
-  return res.json({ message: TWEET_MESSAGES.GET_TWEET_SUCCESSFULLY })
+  const result = req.tweet
+  return res.json({ message: TWEET_MESSAGES.GET_TWEET_SUCCESSFULLY, result })
 }

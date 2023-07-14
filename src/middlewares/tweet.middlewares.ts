@@ -8,6 +8,7 @@ import { TWEET_MESSAGES, USERS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
 import Tweet from '~/models/schemas/Twitter.schema'
 import databaseService from '~/services/database.services'
+import tweetsService from '~/services/tweets.services'
 import { numberEnumToArray } from '~/utils/common'
 import { wrapRequestHandler } from '~/utils/handler'
 import { validate } from '~/utils/validate'
@@ -155,7 +156,8 @@ export const tweetIdValidator = validate(
               })
             }
 
-            const tweet = await databaseService.tweets.findOne({ _id: new ObjectId(tweet_id) })
+            // Find tweet detail by query
+            const tweet = await tweetsService.getTweetDetails(tweet_id)
             if (!tweet) {
               throw new ErrorWithStatus({
                 status: HTTP_STATUS.NOT_FOUND,
