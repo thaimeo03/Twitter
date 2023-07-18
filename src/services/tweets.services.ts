@@ -170,6 +170,7 @@ class TweetsService {
     return result.value as WithId<{
       guest_views: number
       user_views: number
+      updated_at: Date
     }>
   }
 
@@ -177,12 +178,14 @@ class TweetsService {
     tweet_id,
     tweet_type,
     page,
-    limit
+    limit,
+    user_id
   }: {
     tweet_id: string
     tweet_type: TweetType
     page: number
     limit: number
+    user_id?: string
   }) {
     const [result, total] = await Promise.all([
       await databaseService.tweets
@@ -290,9 +293,6 @@ class TweetsService {
                     }
                   }
                 }
-              },
-              total_views: {
-                $add: ['$guest_views', '$user_views']
               }
             }
           },
@@ -315,6 +315,32 @@ class TweetsService {
       })
     ])
     const total_pages = Math.ceil(total / limit)
+
+    // Increase view count
+    const tweet_ids = result.map((tweet) => tweet._id)
+    const inc = user_id ? { user_views: 1 } : { guest_views: 1 }
+    const date = new Date()
+    await databaseService.tweets.updateMany(
+      {
+        _id: {
+          $in: tweet_ids
+        }
+      },
+      {
+        $inc: inc,
+        $set: {
+          updated_at: date
+        }
+      }
+    )
+    result.forEach((tweet) => {
+      tweet.updated_at = date
+      if (user_id) {
+        tweet.user_views += 1
+      } else {
+        tweet.guest_views += 1
+      }
+    })
 
     return {
       result,
