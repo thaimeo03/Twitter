@@ -207,3 +207,47 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
   }
   next()
 })
+
+export const getTweetChildrenValidator = validate(
+  checkSchema(
+    {
+      tweet_type: {
+        isIn: {
+          options: [tweetTypes],
+          errorMessage: TWEET_MESSAGES.INVALID_TWEET_TYPE
+        }
+      },
+      page: {
+        isNumeric: true,
+        custom: {
+          options: (value) => {
+            const page = Number(value)
+            if (page < 1) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: TWEET_MESSAGES.INVALID_PAGE
+              })
+            }
+            return true
+          }
+        }
+      },
+      limit: {
+        isNumeric: true,
+        custom: {
+          options: (value) => {
+            const limit = Number(value)
+            if (limit < 1 || limit > 100) {
+              throw new ErrorWithStatus({
+                status: HTTP_STATUS.BAD_REQUEST,
+                message: TWEET_MESSAGES.INVALID_LIMIT
+              })
+            }
+            return true
+          }
+        }
+      }
+    },
+    ['query']
+  )
+)

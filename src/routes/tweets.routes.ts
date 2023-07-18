@@ -1,6 +1,11 @@
 import { Router } from 'express'
 import { createTweetController, getTweetChildrenController, getTweetController } from '~/controllers/tweets.controllers'
-import { audienceValidator, createTweetValidator, tweetIdValidator } from '~/middlewares/tweet.middlewares'
+import {
+  audienceValidator,
+  createTweetValidator,
+  getTweetChildrenValidator,
+  tweetIdValidator
+} from '~/middlewares/tweet.middlewares'
 import { accessTokenValidator, isUserLoggedInValidator, verifiedUserValidator } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handler'
 
@@ -25,12 +30,13 @@ tweetsRouter.get(
   wrapRequestHandler(getTweetController)
 )
 
-// header?: access_token, params: tweet_id
+// header?: access_token, params: tweet_id, query: tweet_type, page, limit
 tweetsRouter.get(
   '/:tweet_id/children',
   tweetIdValidator,
   isUserLoggedInValidator(accessTokenValidator),
   isUserLoggedInValidator(verifiedUserValidator),
+  getTweetChildrenValidator,
   audienceValidator,
   wrapRequestHandler(getTweetChildrenController)
 )
