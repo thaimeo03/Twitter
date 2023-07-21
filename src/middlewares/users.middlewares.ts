@@ -439,6 +439,10 @@ export const updateUserValidator = validate(
           errorMessage: USERS_MESSAGES.COVER_PHOTO_URL_LENGTH_MUST_BE_FROM_1_TO_200
         },
         trim: true
+      },
+      twitter_circle: {
+        optional: true,
+        isArray: true
       }
     },
     ['body']

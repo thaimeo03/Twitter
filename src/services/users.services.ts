@@ -275,8 +275,9 @@ class UsersService {
   }
 
   async updateUser(user_id: string, payload: UpdateUserBody) {
-    const { date_of_birth, ...rest } = payload
+    const { twitter_circle, date_of_birth, ...rest } = payload
     const update = date_of_birth ? { ...rest, date_of_birth: new Date(date_of_birth) } : rest
+    const twitter_circle_id = twitter_circle?.map((item: string) => new ObjectId(item))
 
     const user = await databaseService.users.findOneAndUpdate(
       {
@@ -284,7 +285,8 @@ class UsersService {
       },
       {
         $set: {
-          ...update
+          ...update,
+          twitter_circle: twitter_circle_id
         },
         $currentDate: {
           updated_at: true
@@ -353,6 +355,15 @@ class UsersService {
     }
 
     return null
+  }
+
+  async getFollowedUsers(user_id: string) {
+    const followers = await databaseService.followers.find({ user_id: new ObjectId(user_id) }).toArray()
+
+    const followed_users_id = followers.map((item) => item.followed_user_id)
+    followed_users_id.push(new ObjectId(user_id))
+
+    return followed_users_id
   }
 
   async changePassword(user_id: string, password: string) {

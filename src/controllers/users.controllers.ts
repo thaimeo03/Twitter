@@ -108,7 +108,6 @@ export const getUserController = async (req: Request, res: Response) => {
 
 export const updateUserController = async (req: Request<ParamsDictionary, any, UpdateUserBody>, res: Response) => {
   const payload = req.body
-  console.log(payload)
 
   if (Object.keys(payload).length === 0) {
     return res.json({ message: USERS_MESSAGES.YOU_NOT_UPDATE_ANYTHING })

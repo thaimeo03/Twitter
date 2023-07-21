@@ -89,7 +89,8 @@ usersRouter.patch(
     'website',
     'username',
     'avatar',
-    'cover_photo'
+    'cover_photo',
+    'twitter_circle'
   ]),
   wrapRequestHandler(updateUserController)
 )

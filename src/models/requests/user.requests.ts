@@ -15,6 +15,7 @@ export interface UpdateUserBody {
   username?: string
   avatar?: string
   cover_photo?: string
+  twitter_circle?: string[]
 }
 
 export interface ChangePasswordBody {
