@@ -10,6 +10,7 @@ import cors from 'cors'
 import tweetsRouter from './routes/tweets.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
+import searchRouter from './routes/search.routes'
 
 const app = express()
 const port = process.env.PORT || 4000
@@ -23,6 +24,7 @@ app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/tweets', tweetsRouter)
+app.use('/search', searchRouter)
 app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likeRouter)
 app.use(defaultErrorHandler)
