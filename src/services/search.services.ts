@@ -1,27 +1,29 @@
 import { ObjectId } from 'mongodb'
 import databaseService from './database.services'
-import { TweetType } from '~/constants/enums'
+import { MediaQuery, TweetType } from '~/constants/enums'
 
 class SearchService {
   async searchContent({
     user_id,
     content,
     page,
-    limit
+    limit,
+    media
   }: {
     user_id: string
     content: string
     page: number
     limit: number
+    media: MediaQuery
   }) {
+    const searchContent = content ? { $text: { $search: content } } : undefined
     const [result, total] = await Promise.all([
       databaseService.tweets
         .aggregate([
           {
             $match: {
-              $text: {
-                $search: content
-              }
+              ...searchContent,
+              'medias.type': media === MediaQuery.Image ? 0 : 1
             }
           },
           {

@@ -16,6 +16,11 @@ export enum MediaType {
   Video
 }
 
+export enum MediaQuery {
+  Image = 'image',
+  Video = 'video'
+}
+
 export enum TweetType {
   Tweet,
   Retweet,
