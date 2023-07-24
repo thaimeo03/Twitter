@@ -9,8 +9,9 @@ export const searchContentController = async (req: Request, res: Response, next:
   const page = Number(req.query.page) || 1
   const limit = Number(req.query.limit) || 10
   const media = req.query.media as MediaQuery
+  const pf = req.query.pf as string
 
-  const { result, total_pages } = await searchService.searchContent({ user_id, content, page, limit, media })
+  const { result, total_pages } = await searchService.searchContent({ user_id, content, page, limit, media, pf })
 
   return res.json({
     message: TWEET_MESSAGES.GET_NEW_FEEDS_SUCCESSFULLY,

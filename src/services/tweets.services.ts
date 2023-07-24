@@ -586,7 +586,7 @@ class TweetsService {
 
     return {
       result,
-      total_pages: Math.ceil(total[0]?.total / limit)
+      total_pages: Math.ceil(total[0]?.total / limit) || 0
     }
   }
 }

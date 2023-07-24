@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import databaseService from './database.services'
 import { MediaQuery, TweetType } from '~/constants/enums'
+import usersService from './users.services'
 
 class SearchService {
   async searchContent({
@@ -8,23 +9,33 @@ class SearchService {
     content,
     page,
     limit,
-    media
+    media,
+    pf
   }: {
     user_id: string
     content: string
     page: number
     limit: number
     media: MediaQuery
+    pf: string
   }) {
+    const followed_users_id = await usersService.getFollowedUsers(user_id)
+
     const searchContent = content ? { $text: { $search: content } } : undefined
+    const pf_query = pf === 'true' ? { user_id: { $in: followed_users_id } } : undefined
+    const media_query = media ? { 'medias.type': media === 'image' ? 0 : 1 } : undefined
+
+    const $match = {
+      ...searchContent,
+      ...pf_query,
+      ...media_query
+    }
+
     const [result, total] = await Promise.all([
       databaseService.tweets
         .aggregate([
           {
-            $match: {
-              ...searchContent,
-              'medias.type': media === MediaQuery.Image ? 0 : 1
-            }
+            $match
           },
           {
             $lookup: {
@@ -181,11 +192,7 @@ class SearchService {
       databaseService.tweets
         .aggregate([
           {
-            $match: {
-              $text: {
-                $search: content
-              }
-            }
+            $match
           },
           {
             $lookup: {
@@ -250,7 +257,7 @@ class SearchService {
 
     return {
       result,
-      total_pages: Math.ceil(total[0]?.total / limit)
+      total_pages: Math.ceil(total[0]?.total / limit) || 0
     }
   }
 }
