@@ -50,7 +50,7 @@ const createSendEmailCommand = ({
   })
 }
 
-const sendVerifyEmail = async (toAddress: string, subject: string, body: string) => {
+export const sendVerifyEmail = async (toAddress: string, subject: string, body: string) => {
   const sendEmailCommand = createSendEmailCommand({
     fromAddress: process.env.SES_FROM_ADDRESS as string,
     toAddresses: toAddress as string,
@@ -65,9 +65,3 @@ const sendVerifyEmail = async (toAddress: string, subject: string, body: string)
     return e
   }
 }
-
-sendVerifyEmail(
-  'thaitran15072003@gmail.com',
-  'Hello, I want to verify myself',
-  '<h1 style="color: red;">Test email</h1>'
-)

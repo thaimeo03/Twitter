@@ -19,6 +19,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import { USERS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { Request } from 'express'
+import { sendVerifyEmail } from '~/utils/email'
 
 class UsersService {
   async emailExists(email: string) {
@@ -95,6 +96,14 @@ class UsersService {
 
     await databaseService.refreshTokens.insertOne(
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
+    )
+
+    sendVerifyEmail(
+      payload.email,
+      'Verify your email',
+      `<h1>Click 
+       <a href=${process.env.URL_CLIENT}/verify-email?token=${email_verify_token} style="color: blue">here</a>
+       to verify your email</h1>`
     )
 
     return { access_token, refresh_token }
