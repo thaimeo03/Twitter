@@ -60,7 +60,6 @@ export const verifyEmailController = async (req: Request, res: Response) => {
 
 export const ResendEmailVerificationController = async (req: Request, res: Response) => {
   const user_id = req.decodedAuthorization.user_id as string
-  console.log(user_id)
 
   const user = await databaseService.users.findOne({ _id: new ObjectId(user_id) })
 
@@ -72,14 +71,18 @@ export const ResendEmailVerificationController = async (req: Request, res: Respo
     return res.json({ message: USERS_MESSAGES.USER_ALREADY_VERIFIED })
   }
 
-  await usersService.resendVerifyEmail(user_id)
+  const { email } = user
+  await usersService.resendVerifyEmail({ user_id, email })
+
   return res.json({ message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESSFULLY })
 }
 
 export const forgotPasswordController = async (req: Request, res: Response) => {
   const user_id = req.user._id as ObjectId
   const verify = req.user.verify as UserVerifyStatus
-  await usersService.forgotPassword(user_id.toString(), verify)
+  const { name, email } = req.user
+
+  await usersService.forgotPassword(user_id.toString(), verify, name as string, email as string)
 
   return res.json({ message: USERS_MESSAGES.CHECK_YOUR_EMAIL_FOR_RESET_PASSWORD })
 }

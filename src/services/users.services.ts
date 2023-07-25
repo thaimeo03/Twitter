@@ -19,7 +19,7 @@ import { ErrorWithStatus } from '~/models/Errors'
 import { USERS_MESSAGES } from '~/constants/messages'
 import HTTP_STATUS from '~/constants/httpStatus'
 import { Request } from 'express'
-import { sendVerifyEmail } from '~/utils/email'
+import { sendVerifyEmail, sendVerifyRegisterEmail, sendVerifyResetPassword } from '~/utils/email'
 
 class UsersService {
   async emailExists(email: string) {
@@ -98,13 +98,7 @@ class UsersService {
       new RefreshToken({ user_id: new ObjectId(user_id), token: refresh_token })
     )
 
-    sendVerifyEmail(
-      payload.email,
-      'Verify your email',
-      `<h1>Click 
-       <a href=${process.env.URL_CLIENT}/verify-email?token=${email_verify_token} style="color: blue">here</a>
-       to verify your email</h1>`
-    )
+    await sendVerifyRegisterEmail(email_verify_token, payload.email)
 
     return { access_token, refresh_token }
   }
@@ -235,15 +229,16 @@ class UsersService {
     return { access_token, refresh_token }
   }
 
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail({ user_id, email }: { user_id: string; email: string }) {
     const email_verify_token = await this.signEmailVerifyToken(user_id, UserVerifyStatus.Unverified)
     await databaseService.users.updateOne(
       { _id: new ObjectId(user_id) },
       { $set: { email_verify_token }, $currentDate: { updated_at: true } }
     )
+    await sendVerifyRegisterEmail(email_verify_token, email)
   }
 
-  async forgotPassword(user_id: string, verify: UserVerifyStatus) {
+  async forgotPassword(user_id: string, verify: UserVerifyStatus, name: string, email: string) {
     const forgot_password_token = await this.signForgotPasswordToken(user_id, verify)
     await databaseService.users.updateOne(
       {
@@ -254,7 +249,8 @@ class UsersService {
         $currentDate: { updated_at: true }
       }
     )
-    console.log(forgot_password_token)
+
+    await sendVerifyResetPassword(forgot_password_token, name, email)
   }
 
   async resetPassword(user_id: string, password: string) {
