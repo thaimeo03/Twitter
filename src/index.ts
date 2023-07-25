@@ -11,6 +11,7 @@ import tweetsRouter from './routes/tweets.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
 import searchRouter from './routes/search.routes'
+// import './utils/send-email'
 
 const app = express()
 const port = process.env.PORT || 4000
