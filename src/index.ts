@@ -11,8 +11,11 @@ import tweetsRouter from './routes/tweets.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likeRouter from './routes/likes.routes'
 import searchRouter from './routes/search.routes'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
 
 const app = express()
+const httpServer = createServer(app)
 const port = process.env.PORT || 4000
 databaseService.connect()
 
@@ -32,6 +35,20 @@ app.use(defaultErrorHandler)
 app.use('/static/image', express.static(UPLOAD_IMAGE_DIR))
 app.use('/static/video', express.static(UPLOAD_VIDEO_DIR))
 
-app.listen(port, () => {
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:3000'
+  }
+})
+
+io.on('connection', (socket) => {
+  console.log(`User connected ${socket.id}`)
+
+  socket.on('disconnect', () => {
+    console.log(`User disconnected ${socket.id}`)
+  })
+})
+
+httpServer.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
